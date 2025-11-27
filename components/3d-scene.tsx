@@ -147,10 +147,10 @@ function SceneControls() {
 
   return (
     <div className="absolute bottom-5 left-0 right-0 flex justify-center gap-4">
-      <Button 
-        variant="outline" 
+      <Button
+        variant="outline"
         onClick={() => setAutoRotate(!autoRotate)}
-        className="bg-white/10 backdrop-blur-md text-white shadow-lg hover:bg-white/20 border-none"
+        className="bg-white/10 backdrop-blur-md text-white shadow-lg border-none"
       >
         {autoRotate ? 'Stop Rotation' : 'Auto Rotate'}
       </Button>
@@ -159,7 +159,7 @@ function SceneControls() {
         value={environment}
         onValueChange={(value) => setEnvironment(value as typeof environment)}
       >
-        <SelectTrigger className="w-[180px] bg-white/10 backdrop-blur-md text-white shadow-lg hover:bg-white/20 border-none">
+        <SelectTrigger className="w-[180px] bg-white/10 backdrop-blur-md text-white shadow-lg border-none">
           <SelectValue placeholder="Environment" />
         </SelectTrigger>
         <SelectContent>
@@ -177,7 +177,7 @@ function SceneControls() {
 // Information overlay
 function InfoOverlay() {
   return (
-    <div className="absolute top-5 left-5 max-w-md p-4 bg-white/10 backdrop-blur-md rounded-md text-white shadow-lg">
+    <div className="absolute top-5 left-5 max-w-md p-4backdrop-blur-md rounded-md text-white shadow-lg p-4">
       <h2 className="text-xl font-bold mb-2">Cubic Character</h2>
       <p className="text-sm">
         This is a 3D model of a cubic character modeled with Blender, exported as glb and rendered
@@ -205,11 +205,13 @@ export function ThreeDScene() {
   }, []);
 
   return (
-    <div className="relative h-full w-full flex flex-col">
+    <div className="relative flex h-full w-full flex-col">
       {isLoading && <LoadingScreen />}
-      <Canvas className="flex-1">
-        <SceneContent />
-      </Canvas>
+      <div className="relative flex-1">
+        <Canvas className="h-full w-full">
+          <SceneContent />
+        </Canvas>
+      </div>
 
       <InfoOverlay />
       <SceneControls />
