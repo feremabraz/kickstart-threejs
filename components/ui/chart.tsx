@@ -66,32 +66,42 @@ function ChartContainer({
 }
 
 const ChartStyle = ({ id, config }: { id: string; config: ChartConfig }) => {
-  const colorConfig = Object.entries(config).filter(([, config]) => config.theme || config.color);
+  const colorConfig = React.useMemo(
+    () => Object.entries(config).filter(([, config]) => config.theme || config.color),
+    [config]
+  );
+  const hasConfig = colorConfig.length > 0;
 
-  if (!colorConfig.length) {
-    return null;
-  }
+  const cssRules = React.useMemo(() => {
+    if (!hasConfig) return '';
 
-  // Create CSS rules as a string
-  const cssRules = Object.entries(THEMES)
-    .map(([theme, prefix]) => {
-      const themeStyles = colorConfig
-        .map(([key, itemConfig]) => {
-          const color =
-            itemConfig.theme?.[theme as keyof typeof itemConfig.theme] || itemConfig.color;
-          return color ? `--color-${key}: ${color};` : '';
-        })
-        .filter(Boolean)
-        .join('\n  ');
+    return Object.entries(THEMES)
+      .map(([theme, prefix]) => {
+        const themeStyles = colorConfig
+          .map(([key, itemConfig]) => {
+            const color =
+              itemConfig.theme?.[theme as keyof typeof itemConfig.theme] || itemConfig.color;
+            return color ? `--color-${key}: ${color};` : '';
+          })
+          .filter(Boolean)
+          .join('\n  ');
 
-      return `${prefix} [data-chart=${id}] {\n  ${themeStyles}\n}`;
-    })
-    .join('\n\n');
+        return `${prefix} [data-chart=${id}] {\n  ${themeStyles}\n}`;
+      })
+      .join('\n\n');
+  }, [colorConfig, hasConfig, id]);
 
-  // Use a ref to create and manage the style element
   const styleRef = React.useRef<HTMLStyleElement | null>(null);
 
   React.useEffect(() => {
+    if (!hasConfig) {
+      if (styleRef.current) {
+        document.head.removeChild(styleRef.current);
+        styleRef.current = null;
+      }
+      return;
+    }
+
     if (!styleRef.current) {
       styleRef.current = document.createElement('style');
       document.head.appendChild(styleRef.current);
@@ -105,7 +115,11 @@ const ChartStyle = ({ id, config }: { id: string; config: ChartConfig }) => {
         styleRef.current = null;
       }
     };
-  }, [cssRules]);
+  }, [cssRules, hasConfig]);
+
+  if (!hasConfig) {
+    return null;
+  }
 
   return null;
 };
@@ -171,7 +185,7 @@ function ChartTooltipContent({
   return (
     <div
       className={cn(
-        'border-border/50 bg-background grid min-w-[8rem] items-start gap-1.5 rounded-lg border px-2.5 py-1.5 text-xs shadow-xl',
+        'border-border/50 bg-background grid min-w-32 items-start gap-1.5 rounded-lg border px-2.5 py-1.5 text-xs shadow-xl',
         className
       )}
     >

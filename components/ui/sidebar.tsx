@@ -27,6 +27,36 @@ const SIDEBAR_WIDTH_MOBILE = '18rem';
 const SIDEBAR_WIDTH_ICON = '3rem';
 const SIDEBAR_KEYBOARD_SHORTCUT = 'b';
 
+type CookieStoreLike = {
+  set: (details: { name: string; value: string; expires?: number | Date; path?: string }) => Promise<void>;
+};
+
+function persistSidebarState(openState: boolean) {
+  if (typeof window === 'undefined') return;
+
+  const expires = Date.now() + SIDEBAR_COOKIE_MAX_AGE * 1000;
+  const cookieStore = (window as Window & { cookieStore?: CookieStoreLike }).cookieStore;
+
+  if (cookieStore) {
+    void cookieStore.set({
+      name: SIDEBAR_COOKIE_NAME,
+      value: openState ? '1' : '0',
+      expires,
+      path: '/',
+    });
+    return;
+  }
+
+  try {
+    window.localStorage.setItem(
+      SIDEBAR_COOKIE_NAME,
+      JSON.stringify({ value: openState, expires })
+    );
+  } catch {
+    // Silently ignore storage errors.
+  }
+}
+
 type SidebarContextProps = {
   state: 'expanded' | 'collapsed';
   open: boolean;
@@ -77,8 +107,8 @@ function SidebarProvider({
         _setOpen(openState);
       }
 
-      // This sets the cookie to keep the sidebar state.
-      document.cookie = `${SIDEBAR_COOKIE_NAME}=${openState}; path=/; max-age=${SIDEBAR_COOKIE_MAX_AGE}`;
+      // Persist the state with the Cookie Store API when available.
+      persistSidebarState(openState);
     },
     [setOpenProp, open]
   );
@@ -279,7 +309,7 @@ function SidebarRail({ className, ...props }: React.ComponentProps<'button'>) {
       onClick={toggleSidebar}
       title="Toggle Sidebar"
       className={cn(
-        'hover:after:bg-sidebar-border absolute inset-y-0 z-20 hidden w-4 -translate-x-1/2 transition-all ease-linear group-data-[side=left]:-right-4 group-data-[side=right]:left-0 after:absolute after:inset-y-0 after:left-1/2 after:w-[2px] sm:flex',
+        'hover:after:bg-sidebar-border absolute inset-y-0 z-20 hidden w-4 -translate-x-1/2 transition-all ease-linear group-data-[side=left]:-right-4 group-data-[side=right]:left-0 after:absolute after:inset-y-0 after:left-1/2 after:w-0.5 sm:flex',
         'in-data-[side=left]:cursor-w-resize in-data-[side=right]:cursor-e-resize',
         '[[data-side=left][data-state=collapsed]_&]:cursor-e-resize [[data-side=right][data-state=collapsed]_&]:cursor-w-resize',
         'hover:group-data-[collapsible=offcanvas]:bg-sidebar group-data-[collapsible=offcanvas]:translate-x-0 group-data-[collapsible=offcanvas]:after:left-full',

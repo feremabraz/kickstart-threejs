@@ -118,7 +118,6 @@ function Carousel({
       <section
         onKeyDownCapture={handleKeyDown}
         className={cn('relative', className)}
-        aria-roledescription="carousel"
         data-slot="carousel"
         {...props}
       >
@@ -141,13 +140,11 @@ function CarouselContent({ className, ...props }: React.ComponentProps<'div'>) {
   );
 }
 
-function CarouselItem({ className, ...props }: React.ComponentProps<'div'>) {
+function CarouselItem({ className, ...props }: React.ComponentProps<'article'>) {
   const { orientation } = useCarousel();
 
   return (
-    <div
-      role="group"
-      aria-roledescription="slide"
+    <article
       data-slot="carousel-item"
       className={cn(
         'min-w-0 shrink-0 grow-0 basis-full',
