@@ -93,7 +93,7 @@ function Model() {
   }, [autoRotate]);
 
   return (
-    <group rotation-y={autoRotate ? rotationY : rotation} scale={3} position={[0, -0.5, 0]}>
+    <group rotation-y={autoRotate ? rotationY : rotation} scale={3} position={[0, -2.5, 0]}>
       <primitive object={scene} />
     </group>
   );
