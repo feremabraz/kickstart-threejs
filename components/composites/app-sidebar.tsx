@@ -1,6 +1,5 @@
 'use client';
 
-import type * as React from 'react';
 import {
   ArrowUpCircleIcon,
   BarChartIcon,
@@ -18,6 +17,7 @@ import {
   SettingsIcon,
   UsersIcon,
 } from 'lucide-react';
+import type * as React from 'react';
 
 import { NavDocuments } from '@/components/composites/nav-documents';
 import { NavMain } from '@/components/composites/nav-main';
@@ -156,7 +156,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton asChild className="data-[slot=sidebar-menu-button]:!p-1.5">
+            <SidebarMenuButton asChild className="data-[slot=sidebar-menu-button]:p-1.5!">
               <a href="/">
                 <ArrowUpCircleIcon className="h-5 w-5" />
                 <span className="text-base font-semibold">Acme Inc.</span>

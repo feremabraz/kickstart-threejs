@@ -1,18 +1,18 @@
 'use client';
 
-import { Suspense, useState, useEffect } from 'react';
-import { Canvas } from '@react-three/fiber';
 import {
+  ContactShadows,
   Environment,
+  Float,
+  Html,
   OrbitControls,
   PerspectiveCamera,
   useGLTF,
-  Html,
-  Float,
-  ContactShadows,
   useProgress,
 } from '@react-three/drei';
+import { Canvas } from '@react-three/fiber';
 import { atom, useAtom, useAtomValue } from 'jotai';
+import { Suspense, useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Select,
